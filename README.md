@@ -1,6 +1,4 @@
-# RPG2022
-
-![Clippy](https://github.com/meringu/mini-moba/actions/workflows/clippy_check.yml/badge.svg)
+# Mini Moba
 
 Check it out at https://mini-moba.henare.dev
 
