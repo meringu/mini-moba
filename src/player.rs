@@ -78,7 +78,7 @@ fn update(
     // move the player towards target
     if let Some(target) = player_target.0 {
         // Only move player by x and z
-        let mut target = target.clone();
+        let mut target = target;
         target.y = player_transform.translation.y;
 
         let delta = target - player_transform.translation;
