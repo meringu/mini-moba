@@ -13,15 +13,20 @@ impl Plugin for PlayerPlugin {
 }
 
 #[derive(Component, Default)]
-struct Player;
+struct Player {
+    state: PlayerState,
+}
 
-#[derive(Component, Default)]
-struct PlayerTarget(Option<Vec3>);
+#[derive(Default)]
+enum PlayerState {
+    #[default]
+    Idle,
+    Moving(Vec3),
+}
 
 #[derive(Bundle, Default)]
 struct PlayerBundle {
-    marker: Player,
-    target: PlayerTarget,
+    player: Player,
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     transform: Transform,
@@ -41,7 +46,7 @@ fn setup(
     });
 
     commands.spawn(PlayerBundle {
-        marker: Player,
+        player: Player::default(),
         mesh: meshes.add(shape::UVSphere::default().into()),
         material: debug_material,
         transform: Transform::from_xyz(0.0, 1.0, 0.0),
@@ -51,14 +56,14 @@ fn setup(
 }
 
 fn update(
-    mut query: Query<(&mut Transform, &mut PlayerTarget), With<Player>>,
+    mut query: Query<(&mut Transform, &mut Player)>,
     camera_query: Query<(&Camera, &mut GlobalTransform)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     buttons: Res<Input<MouseButton>>,
     time: Res<Time>,
     mut ev_click: EventWriter<crate::click::ClickEvent>,
 ) {
-    let (mut player_transform, mut player_target) = query.single_mut();
+    let (mut player_transform, mut player) = query.single_mut();
     let (camera, camera_global_transform) = camera_query.single();
     let window = window_query.single();
 
@@ -69,25 +74,27 @@ fn update(
                 if let Some(distance) = ray.intersect_plane(Vec3::ZERO, Vec3::Y) {
                     let point = ray.get_point(distance);
                     ev_click.send(ClickEvent(point));
-                    player_target.0 = Some(point);
+                    player.state = PlayerState::Moving(point);
                 }
             }
         }
     }
 
-    // move the player towards target
-    if let Some(target) = player_target.0 {
-        // Only move player by x and z
-        let mut target = target;
-        target.y = player_transform.translation.y;
+    match player.state {
+        PlayerState::Idle => {}
+        PlayerState::Moving(location) => {
+            // Only move player by x and z
+            let mut target = location;
+            target.y = player_transform.translation.y;
 
-        let delta = target - player_transform.translation;
+            let delta = target - player_transform.translation;
 
-        if delta.length() == 0.0 {
-            player_target.0 = None
-        } else {
-            player_transform.translation +=
-                delta.clamp_length(0.0, time.delta_seconds() * PLAYER_SPEED);
+            if delta.length() == 0.0 {
+                player.state = PlayerState::Idle;
+            } else {
+                player_transform.translation +=
+                    delta.clamp_length(0.0, time.delta_seconds() * PLAYER_SPEED);
+            }
         }
     }
 }

@@ -36,12 +36,12 @@ struct ClickBundle {
 }
 
 #[derive(Resource)]
-pub struct ClickAssets {
+struct ClickAssets {
     mesh: Handle<Mesh>,
     mat: Handle<StandardMaterial>,
 }
 
-pub fn setup(
+fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
