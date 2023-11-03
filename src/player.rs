@@ -1,5 +1,7 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
+use crate::click::ClickEvent;
+
 pub struct PlayerPlugin;
 
 const PLAYER_SPEED: f32 = 10.0;
@@ -49,14 +51,12 @@ fn setup(
 }
 
 fn update(
-    commands: Commands,
-    meshes: ResMut<Assets<Mesh>>,
-    materials: ResMut<Assets<StandardMaterial>>,
     mut query: Query<(&mut Transform, &mut PlayerTarget), With<Player>>,
     camera_query: Query<(&Camera, &mut GlobalTransform)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     buttons: Res<Input<MouseButton>>,
     time: Res<Time>,
+    mut ev_click: EventWriter<crate::click::ClickEvent>,
 ) {
     let (mut player_transform, mut player_target) = query.single_mut();
     let (camera, camera_global_transform) = camera_query.single();
@@ -68,7 +68,7 @@ fn update(
             if let Some(ray) = camera.viewport_to_world(camera_global_transform, pos) {
                 if let Some(distance) = ray.intersect_plane(Vec3::ZERO, Vec3::Y) {
                     let point = ray.get_point(distance);
-                    crate::click::spawn(commands, meshes, materials, point, time.elapsed_seconds());
+                    ev_click.send(ClickEvent(point));
                     player_target.0 = Some(point);
                 }
             }

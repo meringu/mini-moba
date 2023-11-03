@@ -7,7 +7,7 @@ use bevy::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugins(DefaultPlugins)
         .add_plugins(click::ClickPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(map::MapPlugin)
