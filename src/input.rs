@@ -43,7 +43,7 @@ fn update(
             if let Some(distance) = ray.intersect_plane(Vec3::ZERO, Vec3::Y) {
                 let point = ray.get_point(distance);
                 ev_click.send(ClickEvent(point));
-                ev_player.send(PlayerCommand::Move(point).into());
+                ev_player.send(PlayerCommand::Move(point));
             }
         }
     }
