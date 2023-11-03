@@ -13,5 +13,6 @@ fn main() {
         .add_plugins(player::PlayerPlugin)
         .add_plugins(map::MapPlugin)
         .add_plugins(camera::CameraPlugin)
+        .add_plugins(input::InputPlugin)
         .run();
 }

@@ -6,7 +6,9 @@ const PLAYER_SPEED: f32 = 10.0;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup).add_systems(Update, update);
+        app.add_systems(Startup, setup)
+            .add_systems(Update, update)
+            .add_event::<PlayerCommand>();
     }
 }
 
