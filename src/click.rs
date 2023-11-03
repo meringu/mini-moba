@@ -60,10 +60,10 @@ fn update(
     click_assets: Res<ClickAssets>,
     time: Res<Time>,
     mut query: Query<(Entity, &mut Transform, &ClickSpawnTime), With<Click>>,
-    mut ev_levelup: EventReader<ClickEvent>,
+    mut ev_click: EventReader<ClickEvent>,
 ) {
     // spawn new clicks
-    for ev in ev_levelup.iter() {
+    for ev in ev_click.iter() {
         let location = ev.0;
         let mut transform = Transform::from_xyz(location.x, 0.1, location.z); // render just above the map
         transform.rotate_x(PI * 1.5);

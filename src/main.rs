@@ -1,5 +1,6 @@
 mod camera;
 mod click;
+mod input;
 mod map;
 mod player;
 

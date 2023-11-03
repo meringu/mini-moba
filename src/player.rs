@@ -1,6 +1,4 @@
-use bevy::{prelude::*, window::PrimaryWindow};
-
-use crate::click::ClickEvent;
+use bevy::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -15,6 +13,11 @@ impl Plugin for PlayerPlugin {
 #[derive(Component, Default)]
 struct Player {
     state: PlayerState,
+}
+
+#[derive(Event)]
+pub enum PlayerCommand {
+    Move(Vec3),
 }
 
 #[derive(Default)]
@@ -57,26 +60,14 @@ fn setup(
 
 fn update(
     mut query: Query<(&mut Transform, &mut Player)>,
-    camera_query: Query<(&Camera, &mut GlobalTransform)>,
-    window_query: Query<&Window, With<PrimaryWindow>>,
-    buttons: Res<Input<MouseButton>>,
     time: Res<Time>,
-    mut ev_click: EventWriter<crate::click::ClickEvent>,
+    mut ev_player: EventReader<PlayerCommand>,
 ) {
     let (mut player_transform, mut player) = query.single_mut();
-    let (camera, camera_global_transform) = camera_query.single();
-    let window = window_query.single();
 
-    // handle right click
-    if buttons.just_pressed(MouseButton::Left) {
-        if let Some(pos) = window.cursor_position() {
-            if let Some(ray) = camera.viewport_to_world(camera_global_transform, pos) {
-                if let Some(distance) = ray.intersect_plane(Vec3::ZERO, Vec3::Y) {
-                    let point = ray.get_point(distance);
-                    ev_click.send(ClickEvent(point));
-                    player.state = PlayerState::Moving(point);
-                }
-            }
+    for ev in ev_player.iter() {
+        match ev {
+            PlayerCommand::Move(location) => player.state = PlayerState::Moving(*location),
         }
     }
 
