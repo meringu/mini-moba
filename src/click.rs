@@ -32,7 +32,8 @@ struct ClickBundle {
     transform: Transform,
     global_transform: GlobalTransform,
     visibility: Visibility,
-    computed_visibility: ComputedVisibility,
+    inherited_visibility: InheritedVisibility,
+    view_visibility: ViewVisibility,
 }
 
 #[derive(Resource)]
@@ -63,7 +64,7 @@ fn update(
     mut ev_click: EventReader<ClickEvent>,
 ) {
     // spawn new clicks
-    for ev in ev_click.iter() {
+    for ev in ev_click.read() {
         let location = ev.0;
         let mut transform = Transform::from_xyz(location.x, 0.1, location.z); // render just above the map
         transform.rotate_x(PI * 1.5);

@@ -37,7 +37,8 @@ struct PlayerBundle {
     transform: Transform,
     global_transform: GlobalTransform,
     visibility: Visibility,
-    computed_visibility: ComputedVisibility,
+    inherited_visibility: InheritedVisibility,
+    view_visibility: ViewVisibility,
 }
 
 fn setup(
@@ -67,7 +68,7 @@ fn update(
 ) {
     let (mut player_transform, mut player) = query.single_mut();
 
-    for ev in ev_player.iter() {
+    for ev in ev_player.read() {
         match ev {
             PlayerCommand::Move(location) => player.state = PlayerState::Moving(*location),
         }

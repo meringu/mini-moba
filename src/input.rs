@@ -24,7 +24,7 @@ fn update(
     let mut position = None;
 
     // read touches
-    for ev in touch_evr.iter() {
+    for ev in touch_evr.read() {
         if ev.phase == TouchPhase::Started {
             position = Some(ev.position);
         }
